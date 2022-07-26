@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_EXECUTABLE_SUFFIX ".js")
 
-set(coot_src ${CMAKE_CURRENT_SOURCE_DIR}/../checkout/coot-0.9.6)
-add_definitions(-DANALYSE_REFINEMENT_TIMING -DVERSION="0.9.6" -DPACKAGE_VERSION="0.9.6" -DHAVE_CXX_THREAD -DHAVE_BOOST -DHAVE_GSL -DPKGDATADIR="${coot_src}/pixmaps" -DDATADIR="${coot_src}/data")
+set(coot_src ${CMAKE_CURRENT_SOURCE_DIR}/../checkout/coot-1.0)
+add_definitions(-DANALYSE_REFINEMENT_TIMING -DVERSION="1.0" -DPACKAGE_VERSION="1.0" -DHAVE_CXX_THREAD -DHAVE_BOOST -DHAVE_GSL -DPKGDATADIR="${coot_src}/pixmaps" -DDATADIR="${coot_src}/data")
 
 #  pyrogen, compat, auxil, goograph, src ignored.
 
@@ -65,6 +65,7 @@ ${coot_src}/ideal/zo-rama.cc
 ${coot_src}/tw/tw.cc
 ${coot_src}/utils/radix.cc
 ${coot_src}/utils/coot-utils.cc
+${coot_src}/coot-utils/exp-fit.cc
 ${coot_src}/utils/hsv-rgb.cc
 ${coot_src}/utils/backward.cpp
 ${coot_src}/utils/align-utils.cc
@@ -89,7 +90,7 @@ ${coot_src}/protein_db/rna_db.cpp
 ${coot_src}/pli/flev-annotations.cc
 ${coot_src}/pli/protein-ligand-interactions.cc
 ${coot_src}/pli/pi-stacking.cc
-${coot_src}/pli/specs.cc
+#${coot_src}/pli/specs.cc
 ${coot_src}/coot-utils/merge-atom-selections.cc
 ${coot_src}/coot-utils/coot-least-squares.cc
 ${coot_src}/coot-utils/shiftfield.cpp
@@ -262,6 +263,15 @@ ${coot_src}/db-main/db-main.cc
 ${coot_src}/compat/getopt.cc
 ${coot_src}/compat/getopt1.cc
 ${coot_src}/src/gl-matrix.cc
+${coot_src}/src/c-interface-analysis.cc
+${coot_src}/src/c-interface.cc
+${coot_src}/src/c-interface-bonds.cc
+${coot_src}/src/c-interface-build.cc
+${coot_src}/src/c-interface-build-main-chain.cc
+${coot_src}/src/c-interface-build-morph.cc
+${coot_src}/src/c-interface-build-side-chain.cc
+${coot_src}/src/molecule-class-info.cc
+${coot_src}/src/graphics-info.cc
 )
 
 target_include_directories(coot PRIVATE ${coot_src} ${coot_src}/coords ${coot_src}/utils ../include ../example ../checkout/ssm ../checkout/mmdb2 ../checkout/clipper ../checkout/fftw-2.1.5/fftw ../checkout/fftw-2.1.5/rfftw ../checkout/libccp4/ccp4 ../boost)
@@ -732,12 +742,6 @@ target_link_libraries(test-srs-standalone mmdb2 ssm clipper-mmdb clipper-cif cli
 target_include_directories(test-srs-standalone PRIVATE ${coot_src} ${coot_src}/src ../checkout/clipper/ ../checkout/mmdb2 ../checkout/mmdb2/mmdb2 ../checkout/ssm ../checkout/libccp4/ccp4 ../fftw ../rfftw)
 target_compile_options(test-srs-standalone PUBLIC -DFFTW_ENABLE_FLOAT -D_CCP4_NODE_EXAMPLE_ -DNODERAWFS)
 
-add_executable(lidia-main ${coot_src}/lbg/lidia-main.cc)
-target_link_options(lidia-main PRIVATE -sALLOW_MEMORY_GROWTH=1 -sNODERAWFS=1 --pre-js coot_env.js)
-target_link_directories(lidia-main PUBLIC ../mmdb2 ../ssm ../ccp4 ../lib ../clipper/cif ../clipper/mmdb ../clipper/core ../clipper/contrib ../clipper/ccp4)
-target_link_libraries(lidia-main mmdb2 ssm clipper-mmdb clipper-cif clipper-core clipper-contrib clipper-ccp4 fftw rfftw ccp4 coot gsl nodefs.js)
-target_include_directories(lidia-main PRIVATE ${coot_src} ${coot_src}/src ../checkout/clipper/ ../checkout/mmdb2 ../checkout/mmdb2/mmdb2 ../checkout/ssm ../checkout/libccp4/ccp4 ../fftw ../rfftw)
-target_compile_options(lidia-main PUBLIC -DFFTW_ENABLE_FLOAT -D_CCP4_NODE_EXAMPLE_ -DNODERAWFS)
 
 add_executable(cootilus-demo.cpp ${coot_src}/cootilus/cootilus-demo.cpp)
 target_link_options(cootilus-demo.cpp PRIVATE -sALLOW_MEMORY_GROWTH=1 -sNODERAWFS=1 --pre-js coot_env.js)
