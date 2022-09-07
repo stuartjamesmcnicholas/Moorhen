@@ -190,6 +190,24 @@ function loadFiles(files){
 
 }
 
+function flipPeptide(e) {
+
+    postMessage(["output","This task currently does nothing useful","flip_peptide"]);
+    console.log(e.data);
+    const jobId = e.data.jobId;
+
+    const pdbin = dataObjects.pdbFiles[e.data.pdbinKey].fileName;
+    const hklin = dataObjects.mtzFiles[e.data.hklinKey].fileName;
+    const resno = e.data["resnoFlip"];
+    const pdbout = jobId+"out.pdb";
+
+    var result = RSRModule.flipPeptide(pdbin,hklin,resno,pdbout);
+    var pdb_out = RSRModule.FS.readFile(pdbout, { encoding: 'utf8' });
+
+    postMessage(["result",result,currentTaskName]);
+    postMessage(["pdb_out",pdb_out,jobId,currentTaskName]);
+}
+
 function miniRSR(e) {
 
     console.log(e.data);
@@ -244,6 +262,12 @@ onmessage = function(e) {
         case "loadUrl":
             console.log("Download file(s)",e.data.urls);
             downLoadFiles(e.data.urls);
+            break;
+        case "flip_peptide":
+            console.log("Do peptide-flip in cryst worker ...");
+            currentTaskName = "flip_peptide";
+            flipPeptide(e);
+            currentTaskName = "";
             break;
         case "mini_rsr":
             console.log("Do mini-rsr in cryst worker ...");

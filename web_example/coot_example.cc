@@ -17,11 +17,39 @@
 #include <emscripten.h>
 #include <emscripten/bind.h>
 
+#include "mmdb_manager.h"
+
 int mini_rsr_main(int argc, char **argv);
 
 using namespace emscripten;
 
 extern void clear_getopt_initialized();
+
+int flipPeptide(const std::string &pdbin, const std::string &hklin, const int resno, const std::string &pdbout){
+    int retval = 0;
+    std::cout << "In flipPeptide in C++. This does nothing useful." << std::endl;
+    std::cout << "PDBIN: " << pdbin << std::endl;
+    std::cout << "HKLIN: " << hklin << std::endl;
+    std::cout << "RESNO: " << resno << std::endl;
+    std::cout << "PDBOUT: " << pdbout << std::endl;
+
+    const char *filename_cp = pdbin.c_str();
+    const char *filename_out_cp = pdbout.c_str();
+
+    //TODO - So this is where we should implement/call a proper function.
+    //BEGIN STUB
+    mmdb::InitMatType();
+    mmdb::Manager *molHnd = new mmdb::Manager();
+
+    int RC = molHnd->ReadCoorFile(filename_cp);
+    assert(RC==0);
+
+    RC = molHnd->WritePDBASCII(filename_out_cp);
+    assert(RC==0);
+    //END STUB
+
+    return retval;
+}
 
 int mini_rsr(const std::vector<std::string> &args){
 
@@ -50,4 +78,5 @@ int mini_rsr(const std::vector<std::string> &args){
 EMSCRIPTEN_BINDINGS(my_module) {
     register_vector<std::string>("VectorString");
     function("mini_rsr",&mini_rsr);
+    function("flipPeptide",&flipPeptide);
 }
