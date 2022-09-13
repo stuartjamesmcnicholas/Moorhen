@@ -235,8 +235,6 @@ function getRama(e) {
 
 function flipPeptide(e) {
 
-    postMessage(["output","This task currently does nothing useful","flip_peptide"]);
-    console.log(e.data);
     const jobId = e.data.jobId;
 
     const pdbin = dataObjects.pdbFiles[e.data.pdbinKey].fileName;
