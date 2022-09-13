@@ -22,6 +22,9 @@
 #include <emscripten.h>
 #include <emscripten/bind.h>
 
+#include "geometry/residue-and-atom-specs.hh"
+#include "api/interfaces.hh"
+
 #include "mmdb_manager.h"
 #include "clipper/core/ramachandran.h"
 
@@ -202,6 +205,7 @@ std::vector<RamachandranInfo> getRamachandranData(const std::string &pdbin, cons
     return info;
 }
 
+/*
 int flipPeptide(const std::string &pdbin, const std::string &chainId, const int resno, const std::string &pdbout){
     int retval = 0;
     std::cout << "In flipPeptide in C++. This does nothing useful." << std::endl;
@@ -227,6 +231,7 @@ int flipPeptide(const std::string &pdbin, const std::string &chainId, const int 
 
     return retval;
 }
+*/
 
 int mini_rsr(const std::vector<std::string> &args){
 
@@ -271,6 +276,9 @@ EMSCRIPTEN_BINDINGS(my_module) {
     .property("insCode", &ResiduePropertyInfo::insCode)
     .property("restype", &ResiduePropertyInfo::restype)
     .property("property", &ResiduePropertyInfo::property)
+    ;
+    class_<coot::residue_spec_t>("residue_spec_t")
+    .constructor<const std::string &, int, const std::string &>()
     ;
     register_vector<std::string>("VectorString");
     register_vector<RamachandranInfo>("VectorResidueIdentifier");

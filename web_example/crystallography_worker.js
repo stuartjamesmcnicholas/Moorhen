@@ -244,7 +244,10 @@ function flipPeptide(e) {
     const resno = e.data["resnoFlip"];
     const pdbout = jobId+"out.pdb";
 
-    var result = RSRModule.flipPeptide(pdbin,chainId,resno,pdbout);
+    const resSpec = new RSRModule.residue_spec_t(chainId,resno,"");
+
+    var result = RSRModule.flipPeptide(pdbin,resSpec,pdbout);
+
     var pdb_out = RSRModule.FS.readFile(pdbout, { encoding: 'utf8' });
 
     postMessage(["result",result,currentTaskName]);
