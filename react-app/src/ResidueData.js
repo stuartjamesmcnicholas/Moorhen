@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import {parsePDB} from './mgMiniMol.js';
+import {ScrollableCanvas} from './ScrollableCanvas';
 
 import { guid } from './guid.js';
 
@@ -27,28 +28,77 @@ function getOffsetRect(elem) {
 class ResidueDataPlot extends Component {
 
     draw() {
-        this.fixContext();
-        var ctx = this.context;
-        var c = this.canvasRef.current;
+        let scrollX = this.state.scrollX;
+        let scrollY = this.state.scrollY;
+        const ctx = this.context;
+        const c = this.canvasRef.current;
+        this.canvasRef.current.style.position = "relative";
+        this.canvasRef.current.style.left = scrollX+"px";
+        this.canvasRef.current.style.top = scrollY+"px";
 
         ctx.clearRect(0, 0, c.width, c.height);
 
-        ctx.fillStyle = 'yellow';
+        ctx.fillStyle = '#aaa';
         ctx.fillRect(0, 0, c.width, c.height);
         ctx.fillStyle = 'black';
-        ctx.font = "24px serif";
-        ctx.fillText('This widget currently', 10, 50);
-        ctx.fillText('does very little...', 10, 80);
-        if(this.state.plotInfo&&this.state.plotInfo.length>0){
-            //FIXME Now do something useful!!
-            ctx.fillText(this.state.plotInfo[0].chainId+"/"+this.state.plotInfo[0].seqNum+this.state.plotInfo[0].insCode+": "+this.state.plotInfo[0].bval, 10, 110);
-        }
-    }
 
-    fixContext() {
-        this.context = this.canvasRef.current.getContext('2d');
-        var ctx = this.context;
-        this.imageData = ctx.getImageData(0,0,this.canvasRef.current.width, this.canvasRef.current.height);
+        ctx.font = "18px serif";
+
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#000";
+        if(this.state.plotInfo){
+            for(let i=0;i<this.nRows;i++){
+                const ypos = (i + 1) * this.baseLine;
+                ctx.beginPath();
+                ctx.moveTo(0-scrollX, ypos-scrollY);
+                ctx.lineTo(this.maxPerRow*this.dataPointWidth-scrollX, ypos-scrollY);
+                ctx.stroke();
+            }
+            for(let i=0;i<this.state.plotInfo.length;i++){
+                const gfrac = 1.0-this.state.plotInfo[i][this.dataKey]/ this.dataInfoScaling;
+                ctx.fillStyle = 'rgb(255, '+parseInt(256*gfrac)+', 0)';
+                const xpos = i % this.maxPerRow;
+                const ypos = (parseInt(i / this.maxPerRow) + 1) * this.baseLine;
+                ctx.fillRect(xpos*this.dataPointWidth+this.dataPointSpacing/2-scrollX, ypos-scrollY, this.dataPointWidth-this.dataPointSpacing,-parseInt(this.barHeight * this.state.plotInfo[i][this.dataKey] / this.dataInfoScaling));
+            }
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for(let i=0;i<this.state.plotInfo.length;i++){
+                const xpos = i % this.maxPerRow;
+                const ypos = (parseInt(i / this.maxPerRow) + 1) * this.baseLine;
+                ctx.moveTo(xpos*this.dataPointWidth+this.dataPointSpacing/2-scrollX, ypos-scrollY);
+                ctx.lineTo(xpos*this.dataPointWidth+this.dataPointSpacing/2-scrollX, parseInt(ypos-scrollY-this.barHeight * this.state.plotInfo[i][this.dataKey] / this.dataInfoScaling));
+                ctx.lineTo(xpos*this.dataPointWidth+(this.dataPointWidth-this.dataPointSpacing/2)-scrollX, parseInt(ypos-scrollY-this.barHeight * this.state.plotInfo[i][this.dataKey] / this.dataInfoScaling));
+                ctx.lineTo(xpos*this.dataPointWidth+(this.dataPointWidth-this.dataPointSpacing/2)-scrollX, ypos-scrollY);
+                if(xpos%10==0){
+                    ctx.moveTo(xpos*this.dataPointWidth+this.dataPointWidth/2-scrollX, ypos-scrollY);
+                    ctx.lineTo(xpos*this.dataPointWidth+this.dataPointWidth/2-scrollX, ypos-scrollY+6);
+                }
+            }
+            ctx.stroke();
+            if(this.hit>-1){
+                const i = this.hit;
+                ctx.strokeStyle = "#fff";
+                ctx.beginPath();
+                const xpos = i % this.maxPerRow;
+                const ypos = (parseInt(i / this.maxPerRow) + 1) * this.baseLine;
+                ctx.moveTo(xpos*this.dataPointWidth+this.dataPointSpacing/2-scrollX, ypos-scrollY);
+                ctx.lineTo(xpos*this.dataPointWidth+this.dataPointSpacing/2-scrollX, parseInt(ypos-scrollY-this.barHeight * this.state.plotInfo[i][this.dataKey] / this.dataInfoScaling));
+                ctx.lineTo(xpos*this.dataPointWidth+(this.dataPointWidth-this.dataPointSpacing/2)-scrollX, parseInt(ypos-scrollY-this.barHeight * this.state.plotInfo[i][this.dataKey] / this.dataInfoScaling));
+                ctx.lineTo(xpos*this.dataPointWidth+(this.dataPointWidth-this.dataPointSpacing/2)-scrollX, ypos-scrollY);
+                ctx.stroke();
+                ctx.strokeStyle = "#000";
+            }
+            ctx.fillStyle = 'black';
+            for(let i=0;i<this.state.plotInfo.length;i++){
+                const xpos = i % this.maxPerRow;
+                const ypos = (parseInt(i / this.maxPerRow) + 1) * this.baseLine;
+                if(xpos%10==0){
+                    ctx.fillText(""+i,xpos*this.dataPointWidth+4-scrollX, ypos-scrollY+24);
+                }
+            }
+        }
+
     }
 
     doMouseMove(event,self) {
@@ -69,14 +119,20 @@ class ResidueDataPlot extends Component {
 
         x -= offset.left;
         y -= offset.top;
-        
+
+        this.hit = -1;
         if(this.state.plotInfo){
-            let ihit = -1;
-            let mindist = 100000;
-            for(let ip=0;ip<this.state.plotInfo.length;ip++){
-            }
-            if(ihit>-1){
-                this.hit = ihit;
+            const diff = (x+this.state.scrollX)/this.dataPointWidth - Math.floor((x+this.state.scrollX)/this.dataPointWidth);
+            if(diff>.2&&diff<.8){
+                const iRow = parseInt((y+this.state.scrollY-2)/ this.baseLine);
+                const ypos = (iRow + 1) * this.baseLine;
+                const theHit =  (iRow * this.maxPerRow) + Math.floor((x+this.state.scrollX)/this.dataPointWidth);
+                if(theHit<this.state.plotInfo.length){
+                    const v = this.state.plotInfo[theHit][this.dataKey] / this.dataInfoScaling;
+                    if(y+this.state.scrollY>(ypos-v*this.barHeight)&&y+this.state.scrollY<ypos+2){
+                        this.hit = theHit;
+                    }
+                }
                 this.draw();
             }
         }
@@ -87,44 +143,141 @@ class ResidueDataPlot extends Component {
         const self = this;
         this.context = this.canvasRef.current.getContext('2d');
         var ctx = this.context;
-        this.imageData = ctx.getImageData(0,0,this.canvasRef.current.width, this.canvasRef.current.height);
+        this.context = this.canvasRef.current.getContext('2d', {alpha: false});
+        this.draw();
+        var rect = this.scrollDivRef.current.getBoundingClientRect();
+        this.scrollRef.current.setSize(rect.width,this.baseLine);
 
+        //?
         self.mouseDown = false;
         this.canvasRef.current.addEventListener("mousemove", function(evt){ self.doMouseMove(evt,self); }, false);
         self.draw();
+
+        // Some testing junk
+        this.largeRef.current.style.width = "400px";
+        this.largeRef.current.style.height = "200px";
+
+    }
+
+    setScroll(scrollX,scrollY){
+        this.setState({scrollX:scrollX,scrollY:scrollY});
     }
 
     render() {
-        const height = 230;
-        const width = 230;
-        this.canvas = <canvas height={height} height={height} ref={this.canvasRef} />;  
-        return this.canvas;
+        if(this.canvasRef.current){
+            this.context = this.canvasRef.current.getContext('2d', {alpha: false});
+            this.draw();
+        }
+        this.canvas = <ScrollableCanvas largeRef={this.largeRef} ref={this.scrollRef} onScroll={this.setScroll.bind(this)} canvasRef={this.canvasRef} />;
+        return (<div ref={this.scrollDivRef}>{this.canvas}</div>);
+
     }
 
+    handleResize() {
+        if(this.scrollDivRef.current){
+            var rect = this.scrollDivRef.current.getBoundingClientRect();
+            this.scrollRef.current.setSize(rect.width,this.baseLine);
+            this.draw();
+        }
+    }
     constructor(props) {
         super(props);
-        this.state = {plotInfo: null};
+        this.xoff = 15;
+        this.downX = -1;
+        this.downY = -1;
+        this.eX = -1;
+        this.eY = -1;
+        this.state = {scrollX:0,scrollyY:0,plotInfo: null};
         this.canvasRef = createRef();
+        this.scrollRef = createRef();
+        this.scrollDivRef = createRef();
+        this.largeRef = createRef();
+        window.addEventListener('resize', this.handleResize.bind(this));
         this.hit = -1;
+
+        this.nRows = 1;
+
+        this.baseLine = 75;
+        this.barHeight = 40;
+        this.maxPerRow = 200;
+        this.dataPointWidth = 20;
+        this.dataPointSpacing = 8;
+
     }
 
     updatePlotData(plotInfo){
         const self = this;
         this.setState({plotInfo:plotInfo},()=>self.draw());
+
+        this.nRows = parseInt((plotInfo.length + this.maxPerRow - 1) / this.maxPerRow);
+
+        this.largeRef.current.style.width = (1+this.maxPerRow)*(this.dataPointWidth)+"px";
+        let bigHeight = (this.nRows+1)*75;
+        if(bigHeight<200)
+            bigHeight = 200;
+        this.largeRef.current.style.height = bigHeight+"px";
     }
-    
+
 }
 
 class ResidueData extends Component {
+
+    //TODO this should be overridden.
     constructor(props) {
 
         super(props);
 
         this.plotRef = createRef();
 
-        this.state = {selected:"unk",log:"", chainId:"", plotInfo: null};
+        let dummyData = [];
+        this.state = {selected:"unk",log:"", chainId:"", plotInfo: dummyData};
         this.message = "";
         const self = this;
+
+        this.dataKey = 'bval';
+        this.dataInfoScaling = 100.;
+
+    }
+
+    //TODO this should be overridden.
+    getData(){
+        const self = this;
+        let key = self.state.selected;
+        const dataObjectNames = this.getDataObjectNamesFromSharedArrayBuffer(this.props.sharedArrayBuffer);
+        const pdbKeys = Object.keys(dataObjectNames.pdbFiles);
+        if(pdbKeys.length<1){
+            return;
+        }
+        if(key==="unk"){
+            key = pdbKeys[0];
+        }
+        const jobid = guid();
+        const inputData = {method:"get_bvals",jobId:jobid,pdbinKey:key,chainId:this.state.chainId};
+        self.props.crystWorker.postMessage(inputData);
+
+    }
+
+    //TODO this should be overridden.
+    updatePlotData(){
+        const self = this;
+        let key = self.state.selected;
+        const dataObjectNames = this.getDataObjectNamesFromSharedArrayBuffer(this.props.sharedArrayBuffer);
+        const pdbKeys = Object.keys(dataObjectNames.pdbFiles);
+        if(pdbKeys.length<1){
+            return;
+        }
+        if(key==="unk"){
+            key = pdbKeys[0];
+        }
+
+        self.plotRef.current.dataKey = this.dataKey;
+        self.plotRef.current.dataInfoScaling = this.dataInfoScaling;
+
+        if(dataObjectNames.bvalInfo && dataObjectNames.bvalInfo[key]){
+            self.plotRef.current.updatePlotData(dataObjectNames.bvalInfo[key]);
+            this.setState({plotInfo:dataObjectNames.bvalInfo[key]});
+        }
+
     }
 
     getDataObjectNamesFromSharedArrayBuffer(buffer){
@@ -150,49 +303,13 @@ class ResidueData extends Component {
         this.setState({selected:evt.target.value}, ()=> self.getData());
     }
 
-
     handleSubmit(evt){
         evt.preventDefault();
     }
 
-    getData(){
-        const self = this;
-        let key = self.state.selected;
-        const dataObjectNames = this.getDataObjectNamesFromSharedArrayBuffer(this.props.sharedArrayBuffer);
-        const pdbKeys = Object.keys(dataObjectNames.pdbFiles);
-        if(pdbKeys.length<1){
-            return;
-        }
-        if(key==="unk"){
-            key = pdbKeys[0];
-        }
-        const jobid = guid();
-        const inputData = {method:"get_bvals",jobId:jobid,pdbinKey:key,chainId:this.state.chainId};
-        self.props.crystWorker.postMessage(inputData);
-        console.log(inputData);
-        
-    }
-
-    updatePlotData(){
-        const self = this;
-        let key = self.state.selected;
-        const dataObjectNames = this.getDataObjectNamesFromSharedArrayBuffer(this.props.sharedArrayBuffer);
-        const pdbKeys = Object.keys(dataObjectNames.pdbFiles);
-        if(pdbKeys.length<1){
-            return;
-        }
-        if(key==="unk"){
-            key = pdbKeys[0];
-        }
-        if(dataObjectNames.bvalInfo && dataObjectNames.bvalInfo[key]){
-            self.plotRef.current.updatePlotData(dataObjectNames.bvalInfo[key]);
-            this.setState({plotInfo:dataObjectNames.bvalInfo[key]});
-        }
-        
-    }
-
     handleChainChange(evt){
         const self = this;
+        self.plotRef.current.updatePlotData(self.state.plotInfo);
         this.setState({chainId:evt.target.value}, ()=> self.getData());
     }
 
