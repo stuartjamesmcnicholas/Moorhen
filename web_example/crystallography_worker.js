@@ -14,7 +14,7 @@ let RSRModule;
 importScripts('./web_example.js');
 importScripts('./pako.js');
 
-createCCP4Module({print(t){postMessage(["output",t])},printErr(t){postMessage(["output",t]);}})
+createCCP4Module({print: rsrPrint,printErr: rsrPrint})
     .then(function(CCP4Mod) {
              CCP4Module = CCP4Mod;
             })
@@ -327,6 +327,39 @@ onmessage = function(e) {
         case "get_bvals":
             currentTaskName = "get_bvals";
             getBVals(e);
+            currentTaskName = "";
+            break;
+        case "get_xyz":
+            currentTaskName = "get_xyz";
+            const pdbRegex = /.pdb$/;
+            const pdbKeys = Object.keys(dataObjectsNames.pdbFiles);
+            let theData_id;
+            if(e.data.resInfo.molKey){
+                theData_id = e.data.resInfo.molKey
+            } else {
+                for(let iobj=0;iobj<pdbKeys.length;iobj++){
+                    const data_id = pdbKeys[iobj];
+                    const name = dataObjectsNames.pdbFiles[data_id].originalFileName;
+                    const shortName = name.replace(pdbRegex,"");
+                    if(shortName===e.data.resInfo.molName){
+                        console.log("Use",data_id,dataObjects.pdbFiles[data_id]);
+                        theData_id = data_id;
+                        break;
+                    }
+                }
+            }
+            if(theData_id){
+                let result;
+                if(e.data.resInfo.seqNum){
+                    //FIXME - this is almost certainly dodgy. Ignoring insCode is probably a bad idea.
+                    result = CCP4Module.getXYZSeqNumInsCode(dataObjects.pdbFiles[theData_id].fileName,e.data.resInfo.chain,e.data.resInfo.seqNum,"");
+                } else {
+                    result = CCP4Module.getXYZResNo(dataObjects.pdbFiles[theData_id].fileName,e.data.resInfo.chain,e.data.resInfo.resNo);
+                }
+                if(result.size()===3){
+                    postMessage(["result",[-result.get(0),-result.get(1),-result.get(2)],currentTaskName]);
+                }
+            }
             currentTaskName = "";
             break;
         default:
