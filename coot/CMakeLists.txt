@@ -280,7 +280,7 @@ target_include_directories(coot PRIVATE ${coot_src} ${coot_src}/coords ${coot_sr
 set_target_properties(coot PROPERTIES COMPILE_FLAGS "-DHAVE_BOOST -DNODERAWFS -DFFTW_ENABLE_FLOAT -s USE_LIBPNG=1 -s USE_ZLIB=1 -s USE_PTHREADS=1" LINK_FLAGS "-s USE_LIBPNG=1 -s USE_ZLIB=1 -s USE_PTHREADS=1")
 
 FILE(WRITE ${CMAKE_BINARY_DIR}/coot/coot_env.js
-Module.preRun = [function() {ENV.COOT_DATA_DIR="${coot_src}"}, function() {ENV.CCP4_LIB="${CMAKE_BINARY_DIR}/ccp4_lib"}]
+Module.preRun = [function() {ENV.COOT_DATA_DIR="${coot_src}"}, function() {ENV.COOT_REFMAC_LIB_DIR="${CMAKE_BINARY_DIR}/ccp4_lib"}, function() {ENV.CCP4_LIB="${CMAKE_BINARY_DIR}/ccp4_lib"}]
 )
 
 FILE(MAKE_DIRECTORY "data/coot/data/metal/")
