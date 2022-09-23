@@ -24,6 +24,7 @@
 
 #include "geometry/residue-and-atom-specs.hh"
 #include "api/interfaces.hh"
+#include "api/molecules_container.hh"
 
 #include "mmdb_manager.h"
 #include "clipper/core/ramachandran.h"
@@ -258,6 +259,13 @@ int mini_rsr(const std::vector<std::string> &args){
 
 
 EMSCRIPTEN_BINDINGS(my_module) {
+    class_<molecules_container_t>("molecules_container_t")
+    .constructor<>()
+    .function("is_valid_model_molecule",&molecules_container_t::is_valid_model_molecule)
+    .function("is_valid_map_molecule",&molecules_container_t::is_valid_map_molecule)
+    .function("read_pdb",&molecules_container_t::read_pdb)
+    .function("read_mtz",&molecules_container_t::read_mtz)
+    ;
     class_<RamachandranInfo>("RamachandranInfo")
     .constructor<>()
     .property("chainId", &RamachandranInfo::chainId)
