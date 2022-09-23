@@ -265,6 +265,8 @@ EMSCRIPTEN_BINDINGS(my_module) {
     .function("is_valid_map_molecule",&molecules_container_t::is_valid_map_molecule)
     .function("read_pdb",&molecules_container_t::read_pdb)
     .function("read_mtz",&molecules_container_t::read_mtz)
+    .function("flipPeptide_cid", select_overload<int(int, const std::string&,const std::string&)>(&molecules_container_t::flipPeptide))
+    .function("flipPeptide_rs", select_overload<int(int, const coot::residue_spec_t&,const std::string&)>(&molecules_container_t::flipPeptide))
     ;
     class_<RamachandranInfo>("RamachandranInfo")
     .constructor<>()
