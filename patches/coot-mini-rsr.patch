@@ -63,13 +63,30 @@
        std::cout << "DEBUG:: matching_chem_link() returns " << matching_chem_links.size()
 +++ coot-1.0/ideal/ng.cc	2021-06-09 08:08:45.000000000 +0100
 --- ../coot-1.0/ideal/ng.cc	2022-06-28 18:21:03.000000000 +0100
-@@ -112,7 +112,8 @@
+@@ -112,7 +112,8 @@ coot::restraints_container_t::make_restraints_ng(int imol,
           std::cout << "ERROR:: Bad things will now happen" << std::endl;
        }
- 
+
 -      make_non_bonded_contact_restraints_using_threads_ng(imol, geom);
 +      //make_non_bonded_contact_restraints_using_threads_ng(imol, geom);
 +      make_non_bonded_contact_restraints_ng(imol, geom);
        auto tp_5 = std::chrono::high_resolution_clock::now();
- 
+
        if (do_rama_plot_restraints)
+@@ -1389,12 +1390,12 @@ coot::restraints_container_t::make_non_bonded_contact_restraints_ng(int imol,
+          non_bonded_contacts_atom_indices[i].insert(j);
+          simple_restraint::nbc_function_t nbcf = simple_restraint::LENNARD_JONES;
+          simple_restraint r(NON_BONDED_CONTACT_RESTRAINT,
+-                            nbcf, i, *it,
++                            nbcf, i, *it_inner,
+                             is_H_non_bonded_contact,
+                             fixed_atom_flags, dist_min);
+          if (false) // debug
+-            std::cout << "Adding NBC " << i << " " << *it << " " << energy_type_for_atom[i] << " "
+-                              << energy_type_for_atom[*it] << " "
++            std::cout << "Adding NBC " << i << " " << *it_inner << " " << energy_type_for_atom[i] << " "
++                              << energy_type_for_atom[*it_inner] << " "
+                               << is_H_non_bonded_contact << " "
+                               << fixed_atom_flags[0] << " " << fixed_atom_flags[1] << " "
+                               << dist_min <<  "\n";
+
