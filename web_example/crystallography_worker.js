@@ -10,6 +10,7 @@ function rsrPrint(t){
 
 let CCP4Module;
 let RSRModule;
+let molecules_container = null;
 
 importScripts('./web_example.js');
 importScripts('./pako.js');
@@ -38,6 +39,10 @@ const Lib = {
 createRSRModule(Lib)
     .then(function(CCP4Mod) {
              RSRModule = CCP4Mod;
+             molecules_container = new RSRModule.molecules_container_t();
+             console.log("##################################################");
+             console.log(molecules_container);
+             console.log("##################################################");
             })
 .catch((e) => {
         console.log("RSR problem :(");
@@ -46,7 +51,7 @@ createRSRModule(Lib)
 
 
 let dataObjects = {pdbFiles:{}, mtzFiles:{}, cifFiles:{}};
-let dataObjectsNames = {pdbFiles:{}, mtzFiles:{}, cifFiles:{}, ramaInfo:{}, bvalInfo:{}};
+let dataObjectsNames = {pdbFiles:{}, mtzFiles:{}, cifFiles:{}, ramaInfo:{}, bvalInfo:{}, mol_cont_idx:{}};
 let sharedArrayBuffer = null;
 
 function guid(){
@@ -169,6 +174,8 @@ function loadFiles(files){
             //dataObjects.pdbFiles[key] = {hierarchy:hierarchy, fileName:key + ".pdb", originalFileName:thisResult[0], contents:thisResult[1]};
             dataObjects.pdbFiles[key] = {fileName:key + ".pdb", originalFileName:thisResult[0], contents:thisResult[1]};
             dataObjectsNames.pdbFiles[key] = {fileName:key + ".pdb", originalFileName:thisResult[0]};
+            const result = molecules_container.read_pdb(key + ".pdb");
+            dataObjectsNames.mol_cont_idx[key] = result;
         }
         updateShareArrayBuffer();
     }) .catch(function(err) {
@@ -250,6 +257,10 @@ function flipPeptide(e) {
 
     postMessage(["result",result,currentTaskName]);
     postMessage(["pdb_out",pdb_out,jobId,currentTaskName]);
+
+    console.log("Should in fact call molecules_container.flipPeptide_rs with", dataObjectsNames.mol_cont_idx[e.data.pdbinKey]);
+    const resultMolCont = molecules_container.flipPeptide_rs(pdbin,resSpec,"");
+    console.log("result of which is",resultMolCont,", but I do not know what to do with this yet");
 }
 
 function miniRSR(e) {
