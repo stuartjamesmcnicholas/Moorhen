@@ -259,10 +259,9 @@ int mini_rsr(const std::vector<std::string> &args){
 
 class molecules_container_js : public molecules_container_t{
     public:
-        mmdb::Manager *get_mmdb_manager(int imol){ return mol(imol); }
         int writePDBASCII(int imol, const std::string &file_name) { 
             const char *fname_cp = file_name.c_str();
-            return get_mmdb_manager(imol)->WritePDBASCII(fname_cp);
+            return mol(imol)->WritePDBASCII(fname_cp);
         }
         int flipPeptide(int imol, const coot::residue_spec_t &rs, const std::string &alt_conf) { return  molecules_container_t::flipPeptide(imol,rs,alt_conf); }
         int flipPeptide(int imol, const std::string &cid, const std::string &alt_conf) { return molecules_container_t::flipPeptide(imol,cid,alt_conf); }
