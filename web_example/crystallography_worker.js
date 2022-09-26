@@ -39,7 +39,7 @@ const Lib = {
 createRSRModule(Lib)
     .then(function(CCP4Mod) {
              RSRModule = CCP4Mod;
-             molecules_container = new RSRModule.molecules_container_t();
+             molecules_container = new RSRModule.molecules_container_js();
              console.log("##################################################");
              console.log(molecules_container);
              console.log("##################################################");
@@ -251,16 +251,20 @@ function flipPeptide(e) {
 
     const resSpec = new RSRModule.residue_spec_t(chainId,resno,"");
 
+    /*
     var result = RSRModule.flipPeptide(pdbin,resSpec,pdbout);
-
     var pdb_out = RSRModule.FS.readFile(pdbout, { encoding: 'utf8' });
-
-    postMessage(["result",result,currentTaskName]);
-    postMessage(["pdb_out",pdb_out,jobId,currentTaskName]);
+    */
 
     console.log("Should in fact call molecules_container.flipPeptide_rs with", dataObjectsNames.mol_cont_idx[e.data.pdbinKey]);
     const resultMolCont = molecules_container.flipPeptide_rs(pdbin,resSpec,"");
-    console.log("result of which is",resultMolCont,", but I do not know what to do with this yet");
+    const write_result = molecules_container.writePDBASCII(dataObjectsNames.mol_cont_idx[e.data.pdbinKey],pdbout);
+    console.log("result of which is",resultMolCont,write_result);
+    var pdb_out = RSRModule.FS.readFile(pdbout, { encoding: 'utf8' });
+
+    //postMessage(["result",result,currentTaskName]);
+    postMessage(["result",resultMolCont,currentTaskName]);
+    postMessage(["pdb_out",pdb_out,jobId,currentTaskName]);
 }
 
 function miniRSR(e) {
