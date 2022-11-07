@@ -153,7 +153,6 @@ BabyGruMap.prototype.clearBuffersOfStyle = function (gl, style) {
     $this.displayObjects[style].forEach((buffer) => {
         buffer.clearBuffers()
         gl.displayBuffers = gl.displayBuffers?.filter(glBuffer => glBuffer.id !== buffer.id)
-
     })
     $this.displayObjects[style] = []
 }
