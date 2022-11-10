@@ -525,44 +525,6 @@ export const BabyGruClipFogMenuItem = (props) => {
         popoverContent={panelContent}
         menuItemText="Clipping and fogging..."
         onCompleted={onCompleted}
-    />
-}
-
-export const BabyGruMergeMoleculesMenuItem = (props) => {
-    const toRef = useRef(null)
-    const fromRef = useRef(null)
-    const [selectedMolecules, setSelectedMolecules] = useState([])
-
-    const panelContent = <>
-        <BabyGruMoleculeSelect {...props} ref={toRef} />
-        <Form.Group style={{ width: '20rem', margin: '0' }} controlId="BabyGruMergeMoleculeFromMenuItem" className="mb-3">
-            <Form.Label>Molecule into which to merge</Form.Label>
-            <Form.Select
-                vaue={selectedMolecules}
-                ref={fromRef}
-                type="text"
-                multiple={true}
-                name="newMoleculeName"
-                placeholder="New name"
-                onChange={(e) => {
-                    console.log(e)
-                }}
-            >
-                {props.molecules.map(molecule => molecule.coordMolNo !== 0 && <option value={molecule}>{molecule.coordMolNo}: {molecule.name}</option>)}
-            </Form.Select>
-        </Form.Group>
-    </>
-
-    const onCompleted = useCallback(() => {
-        for (let val of fromRef.current.value) {
-            console.log('Val', val)
-        }
-    }, [fromRef.current])
-
-    return <BabyGruMenuItem
-        popoverPlacement='right'
-        popoverContent={panelContent}
-        menuItemText="Merge molecules..."
-        onCompleted={onCompleted}
+        setPopoverIsShown={props.setPopoverIsShown}
     />
 }
