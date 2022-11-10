@@ -14,7 +14,6 @@ export const BabyGruMenuItem = (props) => {
         resolve: () => { },
         reject: () => { }
     })
-    const popoverRef = useRef(null)
 
     return <>
         {props.popoverContent ? <OverlayTrigger 
@@ -40,7 +39,7 @@ export const BabyGruMenuItem = (props) => {
             }}
             
             overlay={
-                <Popover style={{ maxWidth: "40rem" }} ref={popoverRef}>
+                <Popover style={{ maxWidth: "40rem" }}>
                     <PopoverHeader as="h3">{props.menuItemTitle}</PopoverHeader>
                     <PopoverBody>
                         {props.popoverContent}
