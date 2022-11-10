@@ -32,12 +32,10 @@ export const BabyGruMoleculeCard = (props) => {
     ])
 
     useMemo(() => {
-        
         if (currentName == "") {
             return
         }
         props.molecule.name = currentName
-    
     
     }, [currentName]);
 

@@ -61,13 +61,11 @@ export const BabyGruMapCard = (props) => {
     }, [mapContourLevel, mapRadius])
 
     useMemo(() => {
-        
         if (currentName == "") {
             return
         }
         props.map.mapName = currentName
-    
-    
+
     }, [currentName]);
 
     useEffect(() => {
