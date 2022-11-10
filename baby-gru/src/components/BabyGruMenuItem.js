@@ -587,6 +587,7 @@ export const BabyGruMergeMoleculesMenuItem = (props) => {
         for (let val of fromRef.current.value) {
             console.log('Val', val)
         }
+        props.setPopoverIsShown(false)
     }, [fromRef.current])
 
     return <BabyGruMenuItem
@@ -594,5 +595,6 @@ export const BabyGruMergeMoleculesMenuItem = (props) => {
         popoverContent={panelContent}
         menuItemText="Merge molecules..."
         onCompleted={onCompleted}
+        setPopoverIsShown={props.setPopoverIsShown}
     />
 }

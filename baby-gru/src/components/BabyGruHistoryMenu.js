@@ -10,6 +10,8 @@ import { BabyGruMergeMoleculesMenuItem } from "./BabyGruMenuItem";
 export const BabyGruHistoryMenu = (props) => {
     const [showHistory, setShowHistory] = useState(false)
     const [sessionHistory, setSessionHistory] = useState({ commands: [] })
+    const [dropdownIsShown, setDropdownIsShown] = useState(false)
+    const [popoverIsShown, setPopoverIsShown] = useState(false)
 
     useEffect(() => {
         //console.log('CommandHistory', props.commandHistory)
@@ -77,7 +79,7 @@ export const BabyGruHistoryMenu = (props) => {
     }
 
     return <>
-        <NavDropdown title="History" id="basic-nav-dropdown">
+        <NavDropdown title="History" id="basic-nav-dropdown" autoClose={popoverIsShown ? false : 'outside'} onToggle={() => setDropdownIsShown(!dropdownIsShown)} show={dropdownIsShown}>
             <MenuItem variant="success" onClick={(e) => {
                 setShowHistory(true)
             }}>Show command history</MenuItem>
@@ -93,7 +95,7 @@ export const BabyGruHistoryMenu = (props) => {
                 }} />
             </Form.Group>
 
-            <BabyGruMergeMoleculesMenuItem {...props} />
+            <BabyGruMergeMoleculesMenuItem setPopoverIsShown={setPopoverIsShown} {...props} />
 
         </NavDropdown>
         <Modal size="xl" show={showHistory} onHide={() => { setShowHistory(false) }}>
