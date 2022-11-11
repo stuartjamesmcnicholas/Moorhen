@@ -46,7 +46,7 @@ export default function BabyGruSlider(props) {
             <span>{props.sliderTitle}: {props.externalValue.toFixed(3)}</span>
             <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
                 {props.minVal}
-                <Slider value={value} onChange={handleChange} key={props.test}/>
+                <Slider value={value} onChange={handleChange} />
                 {props.maxVal}
             </Stack>
         </Box>
