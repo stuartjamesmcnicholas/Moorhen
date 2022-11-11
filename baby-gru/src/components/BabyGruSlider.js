@@ -23,6 +23,10 @@ export default function BabyGruSlider(props) {
         props.setExternalValue(parseFloat(externalValue))
     }, [externalValue])
 
+    React.useEffect(() => {
+        handleChange(null, convertInitValueToScale(props.externalValue))
+    }, [])
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
         if (props.logScale) {
@@ -42,7 +46,7 @@ export default function BabyGruSlider(props) {
             <span>{props.sliderTitle}: {props.externalValue.toFixed(3)}</span>
             <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
                 {props.minVal}
-                <Slider value={value} onChange={handleChange} />
+                <Slider value={value} onChange={handleChange} key={props.test}/>
                 {props.maxVal}
             </Stack>
         </Box>
