@@ -1,5 +1,5 @@
 import { NavDropdown, Form, Button, InputGroup, Modal, FormSelect, Col, Row, Overlay, Card, FormCheck } from "react-bootstrap";
-import { BabyGruMolecule } from "./BabyGruMolecule";
+import { BabyGruMolecule } from "../utils/BabyGruMolecule";
 import { BabyGruMap } from "../utils/BabyGruMap";
 import { useEffect, useState, useRef, createRef } from "react";
 import { BabyGruMtzWrapper, cootCommand, readTextFile } from '../utils/BabyGruUtils';

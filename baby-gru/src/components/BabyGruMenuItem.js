@@ -4,7 +4,7 @@ import { OverlayTrigger, Popover, PopoverBody, PopoverHeader, Form, InputGroup, 
 import { SketchPicker } from "react-color";
 import { BabyGruMtzWrapper, readTextFile } from "../utils/BabyGruUtils";
 import { BabyGruMap } from "../utils/BabyGruMap";
-import { BabyGruMolecule } from "./BabyGruMolecule";
+import { BabyGruMolecule } from "../utils/BabyGruMolecule";
 import { BabyGruMoleculeSelect } from "./BabyGruMoleculeSelect";
 import BabyGruSlider from "./BabyGruSlider";
 
