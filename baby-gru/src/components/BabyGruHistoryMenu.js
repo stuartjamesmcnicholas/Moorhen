@@ -1,8 +1,8 @@
 import { NavDropdown, Form, Button, InputGroup, NavItem, Modal, Table } from "react-bootstrap";
 import { BabyGruMolecule } from "./BabyGruMolecule";
-import { BabyGruMap } from "./BabyGruMap";
+import { BabyGruMap } from "../utils/BabyGruMap";
 import { useEffect, useState } from "react";
-import { cootCommand, doDownload, doDownloadText, readTextFile } from "../BabyGruUtils";
+import { cootCommand, doDownload, doDownloadText, readTextFile } from "../utils/BabyGruUtils";
 import { MenuItem } from "@mui/material";
 import { BabyGruMergeMoleculesMenuItem } from "./BabyGruMenuItem";
 

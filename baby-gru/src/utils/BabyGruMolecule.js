@@ -7,7 +7,7 @@ import { getMultipleBonds } from '../WebGL/mgWebGLAtomsToPrimitives';
 import { atomsToSpheresInfo } from '../WebGL/mgWebGLAtomsToPrimitives';
 import { contactsToCylindersInfo, contactsToLinesInfo } from '../WebGL/mgWebGLAtomsToPrimitives';
 import { singletonsToLinesInfo } from '../WebGL/mgWebGLAtomsToPrimitives';
-import { postCootMessage, readTextFile, readDataFile, cootCommand } from '../BabyGruUtils'
+import { postCootMessage, readTextFile, readDataFile, cootCommand } from '../utils/BabyGruUtils'
 import { quatToMat4, quat4Inverse } from '../WebGL/quatToMat4.js';
 import * as vec3 from 'gl-matrix/vec3';
 
