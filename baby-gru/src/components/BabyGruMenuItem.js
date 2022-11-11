@@ -175,7 +175,7 @@ export const BabyGruDeleteDisplayObjectMenuItem = (props) => {
         buttonText="Delete"
         popoverPlacement='left'
         popoverContent={panelContent}
-        menuItemText="Delete molecule"
+        menuItemText={props.item.name ? "Rename molecule" : "Rename map"}
         onCompleted={onCompleted}
         setPopoverIsShown={props.setPopoverIsShown}
     />
