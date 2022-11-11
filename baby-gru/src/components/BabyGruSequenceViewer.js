@@ -188,7 +188,6 @@ export const BabyGruSequenceViewer = (props) => {
                         displaystart={start}
                         displayend={end}
                         use-ctrl-to-zoom
-
                         />
                     <protvista-sequence
                         ref={sequenceRef}
