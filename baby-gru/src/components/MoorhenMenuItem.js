@@ -95,7 +95,7 @@ export const MoorhenLoadTutorialDataMenuItem = (props) => {
     const tutorialMtzColumnNames = {
         1: {F: "FWT", PHI: "PHWT", Fobs: 'FP', SigFobs: 'SIGFP', FreeR:'FREE'},
         2: {F: "FWT", PHI: "PHWT", Fobs: 'FP', SigFobs: 'SIGFP', FreeR:'FREE'},
-        3: {F: "FWT", PHI: "PHWT", Fobs: 'F', SigFobs: 'SIGF', FreeR:'FREER'}
+        3: {F: "FWT", PHI: "PHWT", Fobs: 'F',  SigFobs: 'SIGF',  FreeR:'FREER'}
     }
 
     const panelContent = <>
